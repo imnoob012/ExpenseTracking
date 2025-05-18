@@ -1,0 +1,43 @@
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests((requests) -> requests
+                .requestMatchers("/", "/home").permitAll() // "/"と"/home"へのアクセスはpermitAll
+                .anyRequest().authenticated() // それ以外のリクエストは認証が必要
+            )
+            .formLogin((form) -> form
+                .loginPage("/login") // カスタムログインページのURL
+                .permitAll() // ログインページへのアクセスはpermitAll
+            )
+            .logout((logout) -> logout.permitAll());
+        return http.build();
+    }
+
+    @Bean
+    public UserDetailsService users() {
+        UserDetails user = User.withDefaultPasswordEncoder()
+            .username("user")
+            .password("password")
+            .roles("USER")
+            .build();
+        return new InMemoryUserDetailsManager(user);
+    }
+}
+
+<dependency>
+		<groupId>org.thymeleaf.extras</groupId>
+		<artifactId>thymeleaf-extras-springsecurity6</artifactId>
+	</dependency>
+	<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-security</artifactId>
+			</dependency>
+<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
