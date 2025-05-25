@@ -15,8 +15,15 @@
 			<span th:if="${#fields.hasErrors('mail')}" th:errors="*{mail}" style="color: red;"></span>
 		</div>
 		<div>
-			パスワード：<input type="text" placeholder="パスワード" th:field="*{password}" />
+			パスワード：<input type="password" placeholder="パスワード" th:field="*{password}" />
 			<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></span>
+		</div>
+		<div>
+			<label for="role1">一般：</label>
+			<input type="radio"  name="role" value="1"id="role1"/>
+			<label for="role2">管理者：</label>
+			<input type="radio"  name="role" value="2" id="role2"/>
+			<span th:if="${#fields.hasErrors('role')}" th:errors="*{role}" style="color: red;"></span>
 		</div>
 		<div>
 			<input type="submit" value="登録"/>

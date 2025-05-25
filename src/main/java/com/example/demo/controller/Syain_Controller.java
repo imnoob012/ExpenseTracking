@@ -22,12 +22,15 @@ public class Syain_Controller {
 	}
 	//　社員登録機能
 	@PostMapping("/EmployeeRegister")
-	public String Employeeregister(@ModelAttribute("employee") @Validated EmployeeRegisterRequestDto employee, BindingResult bindingresult) {
-		if (bindingresult.hasErrors()) {
+	public String Employeeregister(@ModelAttribute("employee") @Validated EmployeeRegisterRequestDto employee, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
 			return "EmployeeRegister";
 		}
 		expenseTrackingService.employeeRegister(employee);
-		return "redirect:EmployeeList";
+		return "EmployeeList";
 	}
+	//　社員一覧画面（POSTメソッド　完成したら社員登録機能の戻り値をリダイレクトにする。）
+	
+	
 	
 }
