@@ -3,7 +3,7 @@
 
 <mapper namespace="com.example.demo.repository.ExpenseTrackingMapper">
 	<insert id="employeeRegister">
-		INSERT INTO USERS(NAME, MAIL, PASSWORD, CREATEDATE) VALUES (#{name}, #{mail}, #{password}, CURRENT_TIMESTAMP);
+		INSERT INTO USERS(NAME, MAIL, PASSWORD, CREATEDATE, ROLE) VALUES (#{name}, #{mail}, #{password}, CURRENT_TIMESTAMP, #{role});
 	</insert>
 
 </mapper>
