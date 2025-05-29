@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>社員詳細画面</title>
+</head>
+<body>
+	<form method="post" th:action="@{/{id}/detail/process(id=${employee.id})}" th:object="${employee}">
+		<input type="hidden" th:field="*{id}" /> <!--id情報は更新機能のSQL文を発行する際に使用したいから-->
+		<label for="name">名前</label>
+		<input type="text" id="name" th:field="*{name}"/>
+		<label for="mail">メールアドレス</label>
+		<input type="text" id="mail" th:field="*{mail}" />
+		<button type="submit" name="action" value="update">更新</button>
+		<button type="submit" name="action" value="delete">削除</button>
+	</form>
+</body>
+</html>

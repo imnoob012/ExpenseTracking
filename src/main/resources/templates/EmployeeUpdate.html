@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>更新完了画面</title>
+</head>
+<body>
+	<div>
+		<span>社員ID：</span>
+		<span th:text="${updateEmployee.id}"></span>
+	</div>
+	<div>
+		<span>名前：</span>
+		<span th:text="${updateEmployee.name}"></span>
+	</div>	
+	<div>
+		<span>メールアドレス：</span>
+		<span th:text="${updateEmployee.mail}"></span>
+	</div>
+	<div>
+		<span>更新日時：</span>
+		<span th:text="${updateEmployee.updatedate}"></span>
+	</div>
+	
+</body>
+</html>
