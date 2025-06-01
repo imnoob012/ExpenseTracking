@@ -20,6 +20,7 @@
 		<set>
 			NAME = #{name},
 			MAIL = #{mail},
+			ROLE = #{role},
 			UPDATEDATE = CURRENT_TIMESTAMP
 		</set>
 		WHERE ID = #{id};

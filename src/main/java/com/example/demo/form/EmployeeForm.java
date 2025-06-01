@@ -1,13 +1,16 @@
-package com.example.demo.model;
+package com.example.demo.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import com.example.demo.entity.Employee;
+
 import lombok.Data;
 
 @Data
-public class EmployeeRegisterRequestDto {
+public class EmployeeForm {
+	private int id;
 	@NotBlank(message="名前を入力してください")
 	private String name;
 	@NotBlank(message="メールアドレスを入力してください")
@@ -18,4 +21,12 @@ public class EmployeeRegisterRequestDto {
 	private String password;
 	@NotBlank(message="権限を選択してください")
 	private String role;
+	
+	public void createFromEntity(Employee employee) {
+		this.id = employee.getId();
+		this.name = employee.getName();
+		this.mail = employee.getMail();
+		this.password = employee.getPassword();
+		this.role = employee.getRole();
+	}
 }
