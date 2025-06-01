@@ -2,9 +2,27 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>社員一覧画面</title>
 </head>
 <body>
+	<table>
+		<tr>
+			<th>名前</th>
+			<th>メールアドレス</th>
+			<th>削除</th>
+		</tr>
+		<tr th:each="employee : ${employeeDtoList}">
+			<td th:text="${employee.name}"></td>
+			<td th:text="${employee.mail}"></td>
+			<block th:if="${employee.deleteDate == null}">
+				<td>未</td>
+			</block>
+			<block th:unless="${employee.deleteDate == null}">
+				<td>済</td>
+			</block>
+			<td><a th:href="@{/{id}/detail(id=${employee.id})}">編集</a></td>
+		</tr>
+	</table>
 	
 </body>
 </html>
