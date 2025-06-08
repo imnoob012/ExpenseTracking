@@ -89,4 +89,9 @@ public class Syain_Controller {
 			return "redirect:/EmployeeList";
 		}
 	}
+	// ログイン画面
+	@GetMapping("/login")
+	public String login() {
+		return "login";
+	}
 }

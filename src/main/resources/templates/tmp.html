@@ -1,52 +1,102 @@
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+package com.example.security; // 適切なパッケージに配置
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/", "/home").permitAll() // "/"と"/home"へのアクセスはpermitAll
-                .anyRequest().authenticated() // それ以外のリクエストは認証が必要
-            )
-            .formLogin((form) -> form
-                .loginPage("/login") // カスタムログインページのURL
-                .permitAll() // ログインページへのアクセスはpermitAll
-            )
-            .logout((logout) -> logout.permitAll());
-        return http.build();
-    }
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication; // 認証情報を保持するオブジェクト
+import org.springframework.security.core.GrantedAuthority; // ユーザーの権限（ロール）を表すインターフェース
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler; // このインターフェースを実装
+import org.springframework.stereotype.Component; // Springのコンポーネントとして登録
 
-    @Bean
-    public UserDetailsService users() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-            .username("user")
-            .password("password")
-            .roles("USER")
-            .build();
-        return new InMemoryUserDetailsManager(user);
+import java.io.IOException;
+import java.util.Collection; // 権限のコレクション
+import java.util.stream.Collectors; // Stream API のユーティリティ
+
+@Component // このクラスをSpringが管理するBeanとして登録
+public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        // 1. ログインしたユーザーの権限（ロール）を取得
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        // 2. リダイレクト先の初期値（どのロールにも当てはまらなかった場合のデフォルト）
+        String redirectUrl = "/";
+
+        // 3. ロールに基づいてリダイレクト先を決定
+        // Spring Security のロールは通常 "ROLE_" プレフィックスが付くため、それを含めて比較します。
+        boolean isAdmin = authorities.stream()
+                                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")); // 管理者ロールを持っているか？
+
+        boolean isUser = authorities.stream()
+                                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"));   // 一般ユーザーロールを持っているか？
+
+        if (isAdmin) {
+            redirectUrl = "/admin/home"; // 管理者用ホームのURL
+        } else if (isUser) {
+            redirectUrl = "/user/home";  // 一般ユーザー用ホームのURL
+        }
+        // else の場合は、デフォルトの "/" にリダイレクトされます。
+
+        // 4. クライアントサイド（ブラウザ）を新しいURLにリダイレクト
+        response.sendRedirect(redirectUrl);
     }
 }
 
-<dependency>
-		<groupId>org.thymeleaf.extras</groupId>
-		<artifactId>thymeleaf-extras-springsecurity6</artifactId>
-	</dependency>
-	<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-security</artifactId>
-			</dependency>
-<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		
-		
 
-		
-		
-		
-		
-		
-		
+// CustomAuthenticationSuccessHandler のインスタンスをSpringが自動的に注入してくれる
+ @Autowired
+ private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
+ @Bean
+ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+     http
+         .authorizeHttpRequests(authorize -> authorize
+             .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll() // ログインページ、静的リソース
+             .requestMatchers("/admin/**").hasRole("ADMIN") // /admin以下のパスはADMINロールのみ
+             .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // /user以下はUSERまたはADMINロール
+             .anyRequest().authenticated() // その他は認証済みユーザーのみ
+         )
+         .formLogin(form -> form
+             .loginPage("/login") // カスタムログインページのURL
+             .loginProcessingUrl("/login") // ログインフォームのPOST送信先URL
+             .successHandler(customAuthenticationSuccessHandler) // ★★★ ここが重要！ ★★★
+             // .defaultSuccessUrl("/home", true) // これは不要になるので削除またはコメントアウト
+             .failureUrl("/login?error") // ログイン失敗時のリダイレクト先
+             .usernameParameter("username")
+             .passwordParameter("password")
+             .permitAll()
+         )
+         .logout(logout -> logout
+             .logoutUrl("/logout")
+             .logoutSuccessUrl("/login?logout")
+             .invalidateHttpSession(true)
+             .deleteCookies("JSESSIONID")
+             .permitAll()
+         );
+     return http.build();
+ }
+
+ @Bean
+ public PasswordEncoder passwordEncoder() {
+     return new BCryptPasswordEncoder();
+ }
+ @Bean
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        // "user"というユーザー名でパスワードを"password"（ハッシュ化済）でUSERロールを持つユーザー
+        UserDetails user = User.withUsername("user")
+            .password(passwordEncoder.encode("password")) // パスワードは必ずエンコードする
+            .roles("USER") // ロールを設定 (Spring Securityでは内部的に"ROLE_USER"として扱われる)
+            .build();
+
+        // "admin"というユーザー名でパスワードを"adminpass"（ハッシュ化済）でADMINとUSERロールを持つユーザー
+        UserDetails admin = User.withUsername("admin")
+            .password(passwordEncoder.encode("adminpass"))
+            .roles("ADMIN", "USER") // 複数のロールも設定可能
+            .build();
+
+        // これらのユーザーをInMemoryUserDetailsManagerに登録（メモリ上に管理）
+        return new InMemoryUserDetailsManager(user, admin);
+    }
+ // MyUserDetailsService (または実際のUserDetailsServiceの実装) は別途用意してください。
+ // 例: UserRepository と MyUserDetailsService クラス

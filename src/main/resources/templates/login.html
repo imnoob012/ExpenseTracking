@@ -5,6 +5,13 @@
 <title>ログイン画面</title>
 </head>
 <body>
+	<form method="post" th:action="@{/login}">
+		<label for="mail">メールアドレス</label>
+		<input type="text" id="mail" placeholder="メールアドレス" />
+		<label for="password">パスワード</label>
+		<input type="password" id="mail" placeholder="パスワード" />
+		<input type="submit" value="ログイン"/>
+	</form>
 
 </body>
 </html>
