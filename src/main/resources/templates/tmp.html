@@ -1,3 +1,11 @@
+.csrf(csrf -> csrf
+                // H2 Console のパス（およびその配下）でCSRF保護を無効化します
+                .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")))
+
+
+
+
+
 package com.example.security; // 適切なパッケージに配置
 
 import jakarta.servlet.ServletException;
@@ -100,3 +108,35 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     }
  // MyUserDetailsService (または実際のUserDetailsServiceの実装) は別途用意してください。
  // 例: UserRepository と MyUserDetailsService クラス
+ 
+ String roleId = employee.getRole(); // getRole()は"1"や"2"のような文字列を返すと仮定
+
+             if (roleId != null && !roleId.trim().isEmpty()) {
+                 // ロールIDに基づいて権限を割り当てる
+                 List<GrantedAuthority> grantedAuthorities;
+                 switch (roleId) {
+                     case "1":
+                         grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                         break;
+                     case "2":
+                         grantedAuthorities = Arrays.asList(
+                             new SimpleGrantedAuthority("ROLE_ADMIN"), // 管理者ロール
+                             new SimpleGrantedAuthority("ROLE_USER")  // 必要であれば管理者もユーザーロールを持つ
+                         );
+                         break;
+                     default:
+                         // 未知のロールIDの場合
+                         System.err.println("WARN: Unknown role ID: " + roleId + " for user: " + employee.getMail());
+                         grantedAuthorities = Collections.emptyList();
+                         break;
+                 }
+                 this.authorities = grantedAuthorities;
+             } else {
+                 // ロールIDがnullまたは空文字列の場合
+                 this.authorities = Collections.emptyList();
+                 System.err.println("WARN: User (Mail: " + employee.getMail() + ") has no role ID defined or role ID is empty. Setting empty authorities list.");
+             }
+ 
+ 
+ 
+ 

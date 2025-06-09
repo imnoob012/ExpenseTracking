@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.EmployeeDto;
@@ -13,6 +14,7 @@ import com.example.demo.repository.ExpenseTrackingMapper;
 @Service
 public class EmployeeService {
 	@Autowired private ExpenseTrackingMapper expenseTrackingMapper;
+	@Autowired PasswordEncoder passwordEncoder;
 	
 	public void employeeRegister(Employee employee) {
 		expenseTrackingMapper.employeeRegister(employee);
@@ -43,6 +45,7 @@ public class EmployeeService {
 	public Employee formToEntity(EmployeeForm employeeForm) {
 		Employee employee = new Employee();
 		employee.createFromForm(employeeForm);
+		employee.setPassword(passwordEncoder.encode(employee.getPassword()));
 		return employee;
 	}
 	

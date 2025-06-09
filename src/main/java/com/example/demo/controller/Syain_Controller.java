@@ -89,9 +89,16 @@ public class Syain_Controller {
 			return "redirect:/EmployeeList";
 		}
 	}
+	
 	// ログイン画面
 	@GetMapping("/login")
 	public String login() {
 		return "login";
+	}
+	
+	// 交通費管理画面
+	@GetMapping("/ExpenseTrackingList")
+	public String expenseTrackingList() {
+		return "ExpenseTrackingList";
 	}
 }

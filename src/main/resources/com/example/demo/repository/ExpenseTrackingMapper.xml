@@ -33,6 +33,10 @@
 		AND DELETEDATE IS NULL;
 	</update>
 	
+	<select id="findEmployeeByMail">
+		SELECT MAIL, PASSWORD, ROLE FROM USERS WHERE MAIL = #{MAIL};
+	</select>
+	
 </mapper>
 
 

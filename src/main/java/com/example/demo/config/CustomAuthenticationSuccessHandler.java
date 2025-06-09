@@ -20,8 +20,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		// GrantedAuthority型、またはGrantedAuthority型を継承した何かしらの型を受け取る
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		// ロールに基づいてリダイレクト先を決定（Spring SecurityのロールはデフォでROLE_プレフィックスがつく）
+		System.out.print(authorities);
 		boolean isAdmin = authorities.stream()
-									 .anyMatch(auth -> auth.getAuthority().equals("ROLE_2"));
+									 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 		String redirectUrl;
 		
 		if(isAdmin) {

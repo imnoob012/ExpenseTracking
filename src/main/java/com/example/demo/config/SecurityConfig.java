@@ -1,16 +1,13 @@
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -25,7 +22,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/login", "/h2-console").permitAll() // このパスは認証なしでOK
+				.requestMatchers("/login", "/h2-console/**", "/webjars/**", "/js/**", "/css/**").permitAll() // このパスは認証なしでOK
 				.anyRequest().authenticated() //それ以外のリクエストは全て認証が必要
 			)
 			.formLogin(form -> form
@@ -43,7 +40,10 @@ public class SecurityConfig {
 				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID")
 				.permitAll()
-			);
+			)
+			.csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
+			.headers(headers -> headers
+	                .frameOptions(frameOptions -> frameOptions.sameOrigin()));
 		return http.build();
 	}
 	
@@ -53,18 +53,18 @@ public class SecurityConfig {
 	}
 	
 	// インメモリ認証で実装を行っている
-	@Bean
-	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-		UserDetails user = User.withUsername("user")
-			.password(passwordEncoder.encode("password"))
-			.roles("USER")
-			.build();
-		UserDetails admin = User.withUsername("admin")
-			.password(passwordEncoder().encode("password"))
-			.roles("ADMIN")
-			.build();
-		return new InMemoryUserDetailsManager(user, admin);
-	}
+//	@Bean
+//	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//		UserDetails user = User.withUsername("user")
+//			.password(passwordEncoder().encode("password"))
+//			.roles("USER")
+//			.build();
+//		UserDetails admin = User.withUsername("admin")
+//			.password(passwordEncoder().encode("password"))
+//			.roles("ADMIN")
+//			.build();
+//		return new InMemoryUserDetailsManager(user, admin);
+//	}
 	
 	
 	

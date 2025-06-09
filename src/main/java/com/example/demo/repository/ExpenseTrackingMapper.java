@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,7 @@ public interface ExpenseTrackingMapper {
 	void updateEmployee(Employee employee);
 
 	void deleteEmployee(int id);
+
+	Optional<Employee> findEmployeeByMail(String mail);
 	
 }

@@ -7,9 +7,9 @@
 <body>
 	<form method="post" th:action="@{/login}">
 		<label for="mail">メールアドレス</label>
-		<input type="text" id="mail" placeholder="メールアドレス" />
+		<input type="text" name="mail" placeholder="メールアドレス" />
 		<label for="password">パスワード</label>
-		<input type="password" id="mail" placeholder="パスワード" />
+		<input type="password" name="password" placeholder="パスワード" />
 		<input type="submit" value="ログイン"/>
 	</form>
 
