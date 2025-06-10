@@ -51,21 +51,5 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder(); // BCryptアルゴリズムがパスワードハッシュ化において推奨されている
 	}
-	
-	// インメモリ認証で実装を行っている
-//	@Bean
-//	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-//		UserDetails user = User.withUsername("user")
-//			.password(passwordEncoder().encode("password"))
-//			.roles("USER")
-//			.build();
-//		UserDetails admin = User.withUsername("admin")
-//			.password(passwordEncoder().encode("password"))
-//			.roles("ADMIN")
-//			.build();
-//		return new InMemoryUserDetailsManager(user, admin);
-//	}
-	
-	
-	
+
 }

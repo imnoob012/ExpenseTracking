@@ -1,142 +1,40 @@
-.csrf(csrf -> csrf
-                // H2 Console のパス（およびその配下）でCSRF保護を無効化します
-                .ignoringRequestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")))
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">あなたのアプリ名</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">プロフィール</a>
+                    </li>
 
+                    <li class="nav-item admin-only">
+                        <a class="nav-link text-warning" href="/admin/dashboard">管理者ダッシュボード</a>
+                    </li>
+                    <li class="nav-item admin-only">
+                        <a class="nav-link text-warning" href="/admin/users">ユーザー管理</a>
+                    </li>
 
-
-
-
-package com.example.security; // 適切なパッケージに配置
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.Authentication; // 認証情報を保持するオブジェクト
-import org.springframework.security.core.GrantedAuthority; // ユーザーの権限（ロール）を表すインターフェース
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler; // このインターフェースを実装
-import org.springframework.stereotype.Component; // Springのコンポーネントとして登録
-
-import java.io.IOException;
-import java.util.Collection; // 権限のコレクション
-import java.util.stream.Collectors; // Stream API のユーティリティ
-
-@Component // このクラスをSpringが管理するBeanとして登録
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        // 1. ログインしたユーザーの権限（ロール）を取得
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-        // 2. リダイレクト先の初期値（どのロールにも当てはまらなかった場合のデフォルト）
-        String redirectUrl = "/";
-
-        // 3. ロールに基づいてリダイレクト先を決定
-        // Spring Security のロールは通常 "ROLE_" プレフィックスが付くため、それを含めて比較します。
-        boolean isAdmin = authorities.stream()
-                                     .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")); // 管理者ロールを持っているか？
-
-        boolean isUser = authorities.stream()
-                                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER"));   // 一般ユーザーロールを持っているか？
-
-        if (isAdmin) {
-            redirectUrl = "/admin/home"; // 管理者用ホームのURL
-        } else if (isUser) {
-            redirectUrl = "/user/home";  // 一般ユーザー用ホームのURL
-        }
-        // else の場合は、デフォルトの "/" にリダイレクトされます。
-
-        // 4. クライアントサイド（ブラウザ）を新しいURLにリダイレクト
-        response.sendRedirect(redirectUrl);
-    }
-}
-
-
-// CustomAuthenticationSuccessHandler のインスタンスをSpringが自動的に注入してくれる
- @Autowired
- private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-
- @Bean
- public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-     http
-         .authorizeHttpRequests(authorize -> authorize
-             .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll() // ログインページ、静的リソース
-             .requestMatchers("/admin/**").hasRole("ADMIN") // /admin以下のパスはADMINロールのみ
-             .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // /user以下はUSERまたはADMINロール
-             .anyRequest().authenticated() // その他は認証済みユーザーのみ
-         )
-         .formLogin(form -> form
-             .loginPage("/login") // カスタムログインページのURL
-             .loginProcessingUrl("/login") // ログインフォームのPOST送信先URL
-             .successHandler(customAuthenticationSuccessHandler) // ★★★ ここが重要！ ★★★
-             // .defaultSuccessUrl("/home", true) // これは不要になるので削除またはコメントアウト
-             .failureUrl("/login?error") // ログイン失敗時のリダイレクト先
-             .usernameParameter("username")
-             .passwordParameter("password")
-             .permitAll()
-         )
-         .logout(logout -> logout
-             .logoutUrl("/logout")
-             .logoutSuccessUrl("/login?logout")
-             .invalidateHttpSession(true)
-             .deleteCookies("JSESSIONID")
-             .permitAll()
-         );
-     return http.build();
- }
-
- @Bean
- public PasswordEncoder passwordEncoder() {
-     return new BCryptPasswordEncoder();
- }
- @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // "user"というユーザー名でパスワードを"password"（ハッシュ化済）でUSERロールを持つユーザー
-        UserDetails user = User.withUsername("user")
-            .password(passwordEncoder.encode("password")) // パスワードは必ずエンコードする
-            .roles("USER") // ロールを設定 (Spring Securityでは内部的に"ROLE_USER"として扱われる)
-            .build();
-
-        // "admin"というユーザー名でパスワードを"adminpass"（ハッシュ化済）でADMINとUSERロールを持つユーザー
-        UserDetails admin = User.withUsername("admin")
-            .password(passwordEncoder.encode("adminpass"))
-            .roles("ADMIN", "USER") // 複数のロールも設定可能
-            .build();
-
-        // これらのユーザーをInMemoryUserDetailsManagerに登録（メモリ上に管理）
-        return new InMemoryUserDetailsManager(user, admin);
-    }
- // MyUserDetailsService (または実際のUserDetailsServiceの実装) は別途用意してください。
- // 例: UserRepository と MyUserDetailsService クラス
- 
- String roleId = employee.getRole(); // getRole()は"1"や"2"のような文字列を返すと仮定
-
-             if (roleId != null && !roleId.trim().isEmpty()) {
-                 // ロールIDに基づいて権限を割り当てる
-                 List<GrantedAuthority> grantedAuthorities;
-                 switch (roleId) {
-                     case "1":
-                         grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-                         break;
-                     case "2":
-                         grantedAuthorities = Arrays.asList(
-                             new SimpleGrantedAuthority("ROLE_ADMIN"), // 管理者ロール
-                             new SimpleGrantedAuthority("ROLE_USER")  // 必要であれば管理者もユーザーロールを持つ
-                         );
-                         break;
-                     default:
-                         // 未知のロールIDの場合
-                         System.err.println("WARN: Unknown role ID: " + roleId + " for user: " + employee.getMail());
-                         grantedAuthorities = Collections.emptyList();
-                         break;
-                 }
-                 this.authorities = grantedAuthorities;
-             } else {
-                 // ロールIDがnullまたは空文字列の場合
-                 this.authorities = Collections.emptyList();
-                 System.err.println("WARN: User (Mail: " + employee.getMail() + ") has no role ID defined or role ID is empty. Setting empty authorities list.");
-             }
- 
- 
- 
- 
+                    <li class="nav-item user-only">
+                        <a class="nav-link text-info" href="/user/settings">設定</a>
+                    </li>
+                    <li class="nav-item user-only">
+                        <a class="nav-link text-info" href="/user/history">購入履歴</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link text-white">こんにちは、<span id="loggedInUsername">ゲスト</span>さん！</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-outline-light btn-sm ms-2" href="/logout">ログアウト</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
