@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.service;
 
 import java.util.Optional;
 
@@ -8,14 +8,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.auth.LoginUserDetails;
 import com.example.demo.entity.Employee;
-import com.example.demo.repository.ExpenseTrackingMapper;
+import com.example.demo.repository.EmployeeMapper;
 
 @Service
 public class LoginUserDetailService implements UserDetailsService {
 	
 	@Autowired
-	private ExpenseTrackingMapper expenseTrackingMapper;
+	private EmployeeMapper expenseTrackingMapper;
 	
 	// UserDetailsServiceインターフェースのメソッドをこのクラスに実装
 	// ユーザー名をメールアドレスと置き換えてます

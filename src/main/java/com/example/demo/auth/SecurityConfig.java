@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -22,23 +22,24 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/login", "/h2-console/**", "/webjars/**", "/js/**", "/css/**").permitAll() // このパスは認証なしでOK
+				.requestMatchers("/login", "/h2-console/**", "/webjars/**", "/js/**", "/css/**").permitAll()// このパスは認証なしでOK
+				.requestMatchers("/Employee/**").hasAuthority("ROLE_ADMIN")
 				.anyRequest().authenticated() //それ以外のリクエストは全て認証が必要
 			)
 			.formLogin(form -> form
 				.loginPage("/login") // 認証されていないユーザーが保護されているページにアクセスしようとした時の遷移先
 				.loginProcessingUrl("/login") // ログインフォームのPOST送信先をマッピング
 				.successHandler(customAuthenticationSuccessHandler)
-				.failureUrl("/login")
+				.failureUrl("/login?error")
 				.usernameParameter("mail")
 				.passwordParameter("password")
 				.permitAll()
 			)
 			.logout(logout -> logout
 				.logoutUrl("/logout")
-				.logoutSuccessUrl("/logout")
+				.logoutSuccessUrl("/login?logout")
 				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID")
+				.deleteCookies("JSESSIONID", "REMEMBERME")
 				.permitAll()
 			)
 			.csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))

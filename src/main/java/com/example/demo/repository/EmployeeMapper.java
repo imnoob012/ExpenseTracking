@@ -10,7 +10,7 @@ import com.example.demo.entity.Employee;
 
 @Mapper
 @Repository
-public interface ExpenseTrackingMapper {
+public interface EmployeeMapper {
 
 	void employeeRegister(Employee employee);
 

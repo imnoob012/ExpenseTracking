@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>社員登録</title>
 </head>
 <body>
-	<form method="post" th:action="@{/EmployeeRegister}" th:object="${employee}">
+	<div th:replace="fragments/header :: commonHeader"></div>
+	<form method="post" th:action="@{/Employee/EmployeeRegister}" th:object="${employee}">
 		<div>			
 			名前：<input type="text" placeholder="名前" th:field="*{name}" />
 			<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red;"></span>
@@ -29,6 +31,7 @@
 			<input type="submit" value="登録"/>
 		</div>
 	</form>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

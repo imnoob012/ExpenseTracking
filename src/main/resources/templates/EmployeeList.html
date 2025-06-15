@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>社員一覧画面</title>
 </head>
 <body>
+	<div th:replace="fragments/header :: commonHeader"></div>
 	<table>
 		<tr>
 			<th>名前</th>
@@ -20,9 +22,9 @@
 			<block th:unless="${employee.deleteDate == null}">
 				<td>済</td>
 			</block>
-			<td><a th:href="@{/{id}/detail(id=${employee.id})}">編集</a></td>
+			<td><a th:href="@{/Employee/{id}/detail(id=${employee.id})}">編集</a></td>
 		</tr>
 	</table>
-	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
