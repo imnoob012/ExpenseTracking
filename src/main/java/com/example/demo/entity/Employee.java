@@ -14,6 +14,7 @@ public class Employee {
 	private String deleteDate;
 	private String updateDate;
 	
+	
 	public void createFromForm(EmployeeForm employeeForm) {
 		this.id = employeeForm.getId();
 		this.name = employeeForm.getName();

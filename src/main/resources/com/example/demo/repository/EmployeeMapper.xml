@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.demo.repository.ExpenseTrackingMapper">
+<mapper namespace="com.example.demo.repository.EmployeeMapper">
 	
 	<insert id="employeeRegister">
 		INSERT INTO USERS(NAME, MAIL, PASSWORD, CREATEDATE, ROLE) VALUES (#{name}, #{mail}, #{password}, CURRENT_TIMESTAMP, #{role});
@@ -32,6 +32,10 @@
 		WHERE id = #{id}
 		AND DELETEDATE IS NULL;
 	</update>
+	
+	<select id="findEmployeeByMail">
+		SELECT MAIL, PASSWORD, ROLE FROM USERS WHERE MAIL = #{MAIL};
+	</select>
 	
 </mapper>
 

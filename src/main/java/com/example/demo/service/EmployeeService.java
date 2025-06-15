@@ -3,35 +3,37 @@ package com.example.demo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.EmployeeDto;
 import com.example.demo.entity.Employee;
 import com.example.demo.form.EmployeeForm;
-import com.example.demo.repository.ExpenseTrackingMapper;
+import com.example.demo.repository.EmployeeMapper;
 
 @Service
 public class EmployeeService {
-	@Autowired private ExpenseTrackingMapper expenseTrackingMapper;
+	@Autowired private EmployeeMapper employeeMapper;
+	@Autowired PasswordEncoder passwordEncoder;
 	
 	public void employeeRegister(Employee employee) {
-		expenseTrackingMapper.employeeRegister(employee);
+		employeeMapper.employeeRegister(employee);
 	}
 
 	public List<Employee> findAllEmployees() {
-		return expenseTrackingMapper.findAllEmployees();
+		return employeeMapper.findAllEmployees();
 	}
 
 	public Employee getEmployeeById(int id) {
-		return expenseTrackingMapper.getEmployeeById(id);
+		return employeeMapper.getEmployeeById(id);
 	}
 
 	public void updateEmployee(Employee employee) {
-		expenseTrackingMapper.updateEmployee(employee);
+		employeeMapper.updateEmployee(employee);
 	}
 
 	public void deleteEmployee(int id) {
-		expenseTrackingMapper.deleteEmployee(id);
+		employeeMapper.deleteEmployee(id);
 	}
 
 	public EmployeeDto entityToDto(Employee employee) {
@@ -43,6 +45,7 @@ public class EmployeeService {
 	public Employee formToEntity(EmployeeForm employeeForm) {
 		Employee employee = new Employee();
 		employee.createFromForm(employeeForm);
+		employee.setPassword(passwordEncoder.encode(employee.getPassword()));
 		return employee;
 	}
 	

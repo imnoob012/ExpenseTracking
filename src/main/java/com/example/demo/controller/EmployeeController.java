@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.demo.dto.EmployeeDto;
@@ -20,12 +21,14 @@ import com.example.demo.form.EmployeeForm;
 import com.example.demo.service.EmployeeService;
 
 @Controller
-public class Syain_Controller {
+@RequestMapping(value="/Employee")
+public class EmployeeController {
 	@Autowired private EmployeeService employeeService;
 	
 	// 社員登録画面
 	@GetMapping("/EmployeeRegister")
-	public String employeeRegister(@ModelAttribute("employee") EmployeeForm employee) {
+	public String employeeRegister(@ModelAttribute("employee") EmployeeForm employee, Model model) {
+		model.addAttribute("currentPage", "EmployeeRegister");
 		return "EmployeeRegister";
 	}
 	// 社員登録機能
@@ -40,6 +43,7 @@ public class Syain_Controller {
 	// 社員一覧画面（POSTメソッド 完成したら社員登録機能の戻り値をリダイレクトにする。→した）
 	@GetMapping("/EmployeeList")
 	public String employeeList(Model model) {
+		model.addAttribute("currentPage", "EmployeeList");
 		List<Employee> employeeList = employeeService.findAllEmployees();
 		
 		List<EmployeeDto> employeeDtoList =  new ArrayList<>();
@@ -53,6 +57,7 @@ public class Syain_Controller {
 	// 社員詳細画面
 	@GetMapping("/{id}/detail")
 	public String getEmployeeById(@PathVariable int id, Model model) {
+		model.addAttribute("currentPage", "EmployeeDetail");
 		Employee employee = employeeService.getEmployeeById(id);
 		model.addAttribute("employeeForm",employeeService.entityToForm(employee));
 		return "EmployeeDetail";
