@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>交通費登録画面</title>
+</head>
+<body>
+	<div th:replace="fragments/header :: commonHeader"></div>
+	<form method="post" th:action="@{/ExpenseTracking/ExpenseTrackingRegister}" th:object="${expenseTrackingForm}">
+		<div>
+			<label for="userDay">利用日</label>
+			<input type="text" placeholder="yyyymmdd" th:field="*{userDay}"/>
+			<span th:if="${#fields.hasErrors('userDay')}" th:errors="*{userDay}" style="color: red;"></span>			
+		</div>
+		<div>
+			<label for="means">利用機関</label>
+			<input type="text" placeholder="利用機関" th:field="*{means}"/>
+			<span th:if="${#fields.hasErrors('means')}" th:errors="*{means}" style="color: red;"></span>			
+		</div>
+		<div>
+			<label for="secter">利用区間</label>
+			<input type="text" placeholder="利用区間" th:field="*{sector}"/>
+			<span th:if="${#fields.hasErrors('sector')}" th:errors="*{sector}" style="color: red;"></span>
+		</div>
+		<div>
+			<span>往復片道</span>
+			<label for="road1">片道</label>
+			<input type="radio" value="1" id="road1" th:field="*{road}"/>
+			<label for="road2">往復</label>
+			<input type="radio" value="2" id="road2" th:field="*{road}"/>
+			<span th:if="${#fields.hasErrors('road')}" th:errors="*{road}" style="color: red;"></span>			
+		</div>
+		<div>
+			<label for="cost">交通費</label>
+			<input type="text" placeholder="交通費" th:field="*{cost}"/>
+			<span th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}" style="color: red;"></span>			
+		</div>
+		<input type="submit" value="登録"/>
+	</form>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

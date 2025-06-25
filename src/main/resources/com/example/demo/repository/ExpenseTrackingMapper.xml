@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.repository.ExpenseTrackingMapper">
+	
+	<select id="findAllExpenseTracking">
+		SELECT * FROM TRAFFIC;
+	</select>
+	
+	<select id="findByTrafficId">
+		SELECT * FROM TRAFFIC WHERE TRAFFICID = #{trafficId};
+	</select>
+	
+	<insert id="expenseTrackingRegister">
+		INSERT INTO TRAFFIC(USERDAY, MEANS, SECTOR, ROAD, COST, ID) VALUES (#{userDay}, #{means}, #{sector}, #{road}, #{cost}, #{id});
+	</insert>
+	
+	<update id="expenseTrackingUpdate">
+		UPDATE TRAFFIC
+		<set>
+			USERDAY = #{userDay},
+			MEANS = #{means},
+			SECTOR = #{sector},
+			ROAD = #{road},
+		</set>
+		WHERE TRAFFICID = #{trafficId};
+	</update>
+	
+	<delete id="expenseTrackingDelete">
+        DELETE FROM TRAFFIC
+        WHERE TRAFFICID = #{trafficId};
+    </delete>
+</mapper>

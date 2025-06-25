@@ -10,6 +10,7 @@
 			
 			<div class="d-flex gap-3">
 			
+			<!-- 社員管理周りのボタン -->
 			<form th:if="${currentPage == 'EmployeeList'}" sec:authorize="hasRole('ROLE_ADMIN')" th:action="@{/Employee/EmployeeRegister}" method="get">
 				<input type="submit" value="社員登録" class="btn btn-outline-light"/>
 				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -20,6 +21,17 @@
 				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 			</form>
 			
+			<!-- 交通費管理周りのボタン -->
+			<form th:if="${currentPage == 'ExpenseTrackingList'}" sec:authorize="hasRole('ROLE_USER')" th:action="@{/ExpenseTracking/ExpenseTrackingRegister}" method="get">
+				<input type="submit" value="交通費登録" class="btn btn-outline-light"/>
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+			</form>
+			
+			<form th:if="${currentPage == 'ExpenseTrackingRegister' || currentPage == 'ExpenseTrackingDetail'}" sec:authorize="hasRole('ROLE_USER')" th:action="@{/ExpenseTracking/ExpenseTrackingList}" method="get">
+				<input type="submit" value="交通費リスト" class="btn btn-outline-light"/>
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+			</form>
+			<!-- ログアウトボタン -->
 			<form sec:authorize="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" th:action="@{/logout}" method="post">
 				<input type="submit" value="ログアウト" class="btn btn-outline-light"/>
 				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

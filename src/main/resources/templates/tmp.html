@@ -1,40 +1,54 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">あなたのアプリ名</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">ホーム</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">プロフィール</a>
-                    </li>
+// ★★★ ここが重要！tbl (table) の中に tblbody (tbody) を追加します ★★★
+tbl.appendChild(tblbody);
 
-                    <li class="nav-item admin-only">
-                        <a class="nav-link text-warning" href="/admin/dashboard">管理者ダッシュボード</a>
-                    </li>
-                    <li class="nav-item admin-only">
-                        <a class="nav-link text-warning" href="/admin/users">ユーザー管理</a>
-                    </li>
+// ドキュメントフラグメントを使って、DOMへの追加回数を減らしパフォーマンスを向上させます
+const fragment = new DocumentFragment();
 
-                    <li class="nav-item user-only">
-                        <a class="nav-link text-info" href="/user/settings">設定</a>
-                    </li>
-                    <li class="nav-item user-only">
-                        <a class="nav-link text-info" href="/user/history">購入履歴</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <span class="nav-link text-white">こんにちは、<span id="loggedInUsername">ゲスト</span>さん！</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm ms-2" href="/logout">ログアウト</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+for (const expense of expenseTrackingDataList) {
+    // 表の行（<tr>）を作成
+    const row = document.createElement("tr");
+
+    // fetchしてきたデータのプロパティ名リスト
+    const properties = ['userDay', 'means', 'sector', 'road', 'cost'];
+
+    // テーブルデータ（<td>）を作成し、適切なプロパティの値を設定
+    for (const prop of properties) {
+        const cell = document.createElement("td");
+        // expenseオブジェクトの該当するプロパティの値を取得してテキストに設定
+        cell.textContent = expense[prop]; 
+        row.appendChild(cell); // 行にセルを追加
+    }
+    // 表の行を一時的なfragmentに追加
+    fragment.appendChild(row);
+}
+
+// tbodyに作成したすべてのtr要素をまとめて追加
+tblbody.appendChild(fragment);
+
+// <table>要素全体をHTMLの<body>要素（または他の適切な親要素）に追加
+document.body.appendChild(tbl);
+
+
+<!--
+			<table id="expenseTrackingTable">
+					<tr>
+						<th>日付</th>
+						<th>利用機関</th>
+						<th>利用区間</th>
+						<th>往復</th>
+						<th>料金</th>
+					</tr>
+		<tr each="expenseTracking : expenseTrackingData">
+			<td text="expenseTracking.userDay"></td>
+			<td text="expenseTracking.means"></td>
+			<td text="expenseTracking.sector"></td>
+			<block if="expenseTracking.road == '1'">
+				<td>片道</td>
+			</block>
+			<block if="expenseTracking.road == '2'">
+				<td>往復</td>
+			</block>
+			<td text="expenseTracking.cost"></td>
+			<td><a href="@{/ExpenseTracking/{trafficId}/detail(trafficId=expenseTracking.trafficId)}">編集</a></td>
+		</tr>
+		-->

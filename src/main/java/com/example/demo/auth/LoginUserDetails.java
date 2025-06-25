@@ -9,16 +9,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.entity.Employee;
 
+import lombok.Getter;
+
+@Getter
 public class LoginUserDetails implements UserDetails {
 	private String mail;
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
+	private int id; // usersテーブルの主キーを参照する為
 
 	
 	// コンストラクタ ※戻り値の型を指定はしては行けない
 	 public LoginUserDetails(Employee employee) {
 		 this.mail = employee.getMail();
 		 this.password = employee.getPassword();
+		 this.id = employee.getId();
 		    
 		// ロールIDから変換
 		switch (employee.getRole()) {
