@@ -1,26 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>更新完了画面</title>
+<style>
+    body {
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* 上部に寄せる */
+        min-height: 100vh;
+        padding-top: 50px; /* 上からの余白 */
+    }
+    .container {
+        max-width: 500px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 0; /* カードがpaddingを持つため、コンテナのpaddingをリセット */
+    }
+    .card-header {
+        background-color: #007bff;
+        color: white;
+        font-size: 1.25rem;
+        font-weight: bold;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .list-group-item strong {
+        display: inline-block;
+        width: 120px; /* 項目名の幅を固定して揃える */
+    }
+</style>
 </head>
 <body>
-	<div>
-		<span>社員ID：</span>
-		<span th:text="${employeeDto.id}"></span>
+	<div th:replace="fragments/header :: commonHeader"></div>
+	<div class="container">
+        <div class="alert alert-success text-center mb-4" role="alert">
+            社員情報の更新が完了しました！
+        </div>
+		<div class="card">
+			<div class="card-header text-center">
+				更新完了
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">
+					<strong>社員ID：</strong>
+					<span th:text="${employeeDto.id}"></span>
+				</li>
+				<li class="list-group-item">
+					<strong>名前：</strong>
+					<span th:text="${employeeDto.name}"></span>
+				</li>	
+				<li class="list-group-item">
+					<strong>メールアドレス：</strong>
+					<span th:text="${employeeDto.mail}"></span>
+				</li>
+				<li class="list-group-item">
+					<strong>更新日時：</strong>
+					<span th:text="${employeeDto.updateDate}"></span>
+				</li>
+			</ul>
+		</div>
 	</div>
-	<div>
-		<span>名前：</span>
-		<span th:text="${employeeDto.name}"></span>
-	</div>	
-	<div>
-		<span>メールアドレス：</span>
-		<span th:text="${employeeDto.mail}"></span>
-	</div>
-	<div>
-		<span>更新日時：</span>
-		<span th:text="${employeeDto.updateDate}"></span>
-	</div>
-	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

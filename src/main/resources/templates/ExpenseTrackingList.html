@@ -4,37 +4,70 @@
 <meta charset="UTF-8">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>交通費一覧画面</title>
+<style>
+    body {
+        background-color: #f8f9fa; /* 薄いグレーの背景 */
+    }
+    .container {
+        margin-top: 30px; /* ヘッダーからの上部余白 */
+        padding: 30px; /* コンテンツのパディング */
+        background-color: #ffffff; /* 白い背景 */
+        border-radius: 8px; /* 角を丸く */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* 軽い影 */
+    }
+    h2 {
+        margin-bottom: 25px; /* タイトルの下余白 */
+    }
+    .dropdown {
+        margin-bottom: 20px; /* ドロップダウンの下余白 */
+    }
+    /* エラーメッセージのスタイルを調整 */
+    .table-danger-message {
+        color: #dc3545; /* Bootstrapのdangerカラー */
+        font-weight: bold;
+    }
+</style>
 </head>
 <body>
 	<div th:replace="fragments/header :: commonHeader"></div>
 	
-	<div class="dropdown" style="margin: 50px;">
-	    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">月を選択</button>
-	    <ul class="dropdown-menu" id="monthDropdown">
-	      </ul>
-	  </div>
-	
-	<table id="expenseTable" class="table table-bordered mt-4">
-		<thead>
-			<tr>
-				<th>利用日</th>
-				<th>利用機関</th>
-				<th>利用区間</th>
-				<th>片道往復</th>
-				<th>費用</th>
-			</tr>
-		</thead>
-		<tbody id="expenseTableBody">
-			</tbody>
-	</table>  
+	<div class="container">
+        <h2 class="text-center mb-4">交通費一覧</h2>
+
+        <div class="dropdown mb-4"> <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                月を選択
+            </button>
+            <ul class="dropdown-menu" id="monthDropdown">
+                </ul>
+        </div>
+        
+        <div class="table-responsive"> <table id="expenseTable" class="table table-striped table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>利用日</th>
+                        <th>利用機関</th>
+                        <th>利用区間</th>
+                        <th>片道往復</th>
+                        <th>費用</th>
+                        <th>操作</th> </tr>
+                </thead>
+                <tbody id="expenseTableBody">
+                    </tbody>
+            </table>  
+        </div>
+	</div>
 	
 	<script>
 		// HTMLで定義したtbody要素を直接参照できるようにします
 		const expenseTableBody = document.getElementById("expenseTableBody");
-		
+		const dropdownButton = document.querySelector('.dropdown-toggle'); // ドロップダウンボタンを参照
+
 		async function displayExpenseData(year, month) {
 			// 新しいデータを表示する前に、既存のテーブルボディの内容をクリアする
 			expenseTableBody.innerHTML = ''; 
+
+            // ドロップダウンボタンのテキストを更新
+            dropdownButton.textContent = `${year}年${month}月`;
 
 			try {
 				const response = await fetch("/ExpenseTracking/Api/ExpenseTrackingListData");
@@ -61,12 +94,13 @@
 					const noDataRow = document.createElement("tr");
 					const noDataCell = document.createElement("td");
 					// ヘッダーの列数に合わせてcolspan（水平方向のセル結合）を設定
-					noDataCell.setAttribute('colspan', 5); // ヘッダーが5列なので5を設定
+					noDataCell.setAttribute('colspan', 6); // **変更点:** ヘッダーが6列になったので6を設定
+					noDataCell.classList.add('text-center', 'text-muted'); // 中央寄せと控えめな色
 					noDataCell.textContent = `${year}年${month}月の交通費データはありません。`;
 					noDataRow.appendChild(noDataCell);
 					fragment.appendChild(noDataRow);
 				} else {
-					for (const expense of filteredExpenses) { 
+					for (const expense of filteredExpenses) {
 						const row = document.createElement("tr");
 						// fetchしてきたデータのプロパティ（HTMLのヘッダー順に合わせる）
 						const properties = ['userDay', 'means', 'sector', 'road', 'cost'];
@@ -75,6 +109,20 @@
 							cell.textContent = expense[prop];
 							row.appendChild(cell);
 						}
+						
+						// **変更点:** 編集ボタンのセルを追加
+						const actionCell = document.createElement("td");
+						const editButton = document.createElement("button");
+						editButton.classList.add('btn', 'btn-primary', 'btn-sm'); // Bootstrapのボタンスタイル
+						editButton.textContent = '編集';
+						
+						editButton.addEventListener('click', () => {
+							alert(`ID: ${expense.trafficId} のデータを編集します`);
+							window.location.href = `/ExpenseTracking/${expense.trafficId}/detail`; 
+						});
+						actionCell.appendChild(editButton);
+						row.appendChild(actionCell); // 行に編集ボタンのセルを追加
+
 						fragment.appendChild(row);
 					}
 				}
@@ -85,10 +133,10 @@
 			} catch (error) { 
 				console.error('データの取得または処理中にエラーが発生しました:', error);
 				// エラーメッセージをユーザーに表示
-				expenseTableBody.innerHTML = `<tr><td colspan="5" class="text-danger" style="text-align: center;">
+				expenseTableBody.innerHTML = `<tr><td colspan="6" class="text-center table-danger-message">
 					データの読み込み中にエラーが発生しました。時間を置いて再度お試しください。<br>
 					(${error.message || '不明なエラー'})
-					</td></tr>`;
+					</td></tr>`; // **変更点:** colspanを6に変更
 			}
 		}
 

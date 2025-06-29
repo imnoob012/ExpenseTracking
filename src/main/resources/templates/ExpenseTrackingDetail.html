@@ -2,44 +2,106 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1"> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <title>交通費詳細画面</title>
+<style>
+    body {
+        background-color: #f8f9fa; /* 薄いグレーの背景 */
+    }
+    .container {
+        margin-top: 30px; /* ヘッダーからの上部余白 */
+        padding: 30px; /* コンテンツのパディング */
+        background-color: #ffffff; /* 白い背景 */
+        border-radius: 8px; /* 角を丸く */
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* 軽い影 */
+        max-width: 600px; /* フォームの幅を制限して見やすく */
+    }
+    h2 {
+        margin-bottom: 25px; /* タイトルの下余白 */
+        color: #343a40; /* ダークなテキスト色 */
+    }
+    .form-label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        margin-bottom: 1rem; /* 各入力フィールドの下に余白 */
+    }
+    .form-check {
+        margin-bottom: 1rem; /* ラジオボタンの下に余白 */
+    }
+    .btn-group {
+        margin-top: 1.5rem; /* ボタン群の上に余白 */
+        width: 100%; /* ボタン群の幅を親要素に合わせる */
+        display: flex; /* ボタンを横並びにする */
+        justify-content: space-between; /* ボタン間のスペースを均等に */
+    }
+    .btn {
+        flex: 1; /* ボタンの幅を均等に広げる */
+        margin: 0 5px; /* ボタン間に少しスペース */
+    }
+    .btn:first-child {
+        margin-left: 0;
+    }
+    .btn:last-child {
+        margin-right: 0;
+    }
+    .text-danger {
+        font-size: 0.875em; /* エラーメッセージを小さめに */
+    }
+</style>
 </head>
 <body>
 	<div th:replace="fragments/header :: commonHeader"></div>
-	<form method="post" th:action="@{/ExpenseTracking/{trafficId}/detail/process(trafficId=${expenseTrackingForm.trafficId})}" th:object="${expenseTrackingForm}">
-		<div>
-			<label for="userDay">利用日</label>
-			<input type="text" th:field="*{userDay}"/>
-			<span th:if="${#fields.hasErrors('userDay')}" th:errors="*{userDay}" style="color: red;"></span>
-		</div>
-		<div>
-			<label for="means">利用機関</label>
-			<input type="text" th:field="*{means}" />
-			<span th:if="${#fields.hasErrors('means')}" th:errors="*{means}" style="color: red;"></span>
-		</div>
-		<div>
-			<label for="sector">利用区間</label>
-			<input type="text" th:field="*{sector}" />
-			<span th:if="${#fields.hasErrors('sector')}" th:errors="*{sector}" style="color: red;"></span>
-		</div>
-		<div>
-			<!--javascriptでチェックがつけれる（後回し）-->
-			<label for="road1">片道</label>
-			<input type="radio"  name="road" value="1" id="road1"/>
-			<label for="road2">往復</label>
-			<input type="radio"  name="road" value="2" id="road2"/>
-			<span th:if="${#fields.hasErrors('road')}" th:errors="*{road}" style="color: red;"></span>
-		</div>
-		<div>
-			<label for="cost">利用料金</label>
-			<input type="text" th:field="*{cost}" />
-			<span th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}" style="color: red;"></span>
-		</div>
-		
-		<button type="submit" name="action" value="update">更新</button>
-		<button type="submit" name="action" value="delete">削除</button>
-	</form>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	
+	<div class="container">
+        <h2 class="text-center mb-4">交通費詳細</h2>
+
+        <form method="post" th:action="@{/ExpenseTracking/{trafficId}/detail/process(trafficId=${expenseTrackingForm.trafficId})}" th:object="${expenseTrackingForm}">
+            <div class="mb-3">
+                <label for="userDay" class="form-label">利用日</label>
+                <input type="text" class="form-control" id="userDay" th:field="*{userDay}" />
+                <span th:if="${#fields.hasErrors('userDay')}" th:errors="*{userDay}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="means" class="form-label">利用機関</label>
+                <input type="text" class="form-control" id="means" th:field="*{means}" placeholder="例: JR, 東京メトロ" />
+                <span th:if="${#fields.hasErrors('means')}" th:errors="*{means}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="sector" class="form-label">利用区間</label>
+                <input type="text" class="form-control" id="sector" th:field="*{sector}" placeholder="例: 新宿 - 東京" />
+                <span th:if="${#fields.hasErrors('sector')}" th:errors="*{sector}" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label d-block">片道往復</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="road" id="road1" value="1" th:field="*{road}" />
+                    <label class="form-check-label" for="road1">片道</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="road" id="road2" value="2" th:field="*{road}" />
+                    <label class="form-check-label" for="road2">往復</label>
+                </div>
+                <span th:if="${#fields.hasErrors('road')}" th:errors="*{road}" class="text-danger d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label for="cost" class="form-label">費用</label>
+                <input type="number" class="form-control" id="cost" th:field="*{cost}" placeholder="例: 240" />
+                <span th:if="${#fields.hasErrors('cost')}" th:errors="*{cost}" class="text-danger"></span>
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" name="action" value="update" class="btn btn-primary">更新</button>
+                <button type="submit" name="action" value="delete" class="btn btn-danger">削除</button>
+            </div>
+        </form>
+	</div>
+	
+	<script src="https://cdn.jsdelivr.com/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
