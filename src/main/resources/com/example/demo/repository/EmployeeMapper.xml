@@ -34,7 +34,7 @@
 	</update>
 	
 	<select id="findEmployeeByMail">
-		SELECT MAIL, PASSWORD, ROLE FROM USERS WHERE MAIL = #{MAIL};
+		SELECT NAME, MAIL, PASSWORD, ROLE, ID FROM USERS WHERE MAIL = #{MAIL};
 	</select>
 	
 </mapper>

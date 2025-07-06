@@ -38,7 +38,7 @@ public class EmployeeController {
 			return "EmployeeRegister";
 		}
 		employeeService.employeeRegister(employeeService.formToEntity(employeeForm));
-		return "redirect:/EmployeeList";
+		return "redirect:EmployeeList";
 	}
 	// 社員一覧画面（POSTメソッド 完成したら社員登録機能の戻り値をリダイレクトにする。→した）
 	@GetMapping("/EmployeeList")
@@ -76,7 +76,7 @@ public class EmployeeController {
 			// 更新完了画面に遷移(modelに値を渡す)
 			Employee updateEmployee = employeeService.getEmployeeById(employeeForm.getId());
 			model.addAttribute("employeeDto", employeeService.entityToDto(updateEmployee));
-			return "EmployeeUpdate";
+			return "redirect:/Employee/EmployeeList";
 			
 //			String inputDateString = updateEmployee.getUpdatedate();	編集完了画面の更新日時の表記の気持ち悪さに関しては一旦放置
 //	        // 入力文字列(更新日時)をLocalDateオブジェクトにパース
@@ -91,7 +91,7 @@ public class EmployeeController {
 			// 削除機能
 			employeeService.deleteEmployee(employeeForm.getId());
 			// 一覧画面にリダイレクト
-			return "redirect:/EmployeeList";
+			return "redirect:/Employee/EmployeeList";
 		}
 	}
 }

@@ -1,40 +1,38 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">あなたのアプリ名</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">ホーム</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/profile">プロフィール</a>
-                    </li>
+SELECT
+    T.*,           -- TRAFFICテーブルの全ての列
+    U.username,    -- USERSテーブルのusername列
+    U.email        -- USERSテーブルのemail列
+FROM
+    TRAFFIC AS T   -- TRAFFICテーブルに 'T' という別名を付ける
+INNER JOIN
+    USERS AS U     -- USERSテーブルに 'U' という別名を付けて内部結合
+ON
+    T.user_id = U.id  -- TRAFFICテーブルのuser_id列とUSERSテーブルのid列が一致するレコードを結合
+WHERE
+    T.USERDAY LIKE #{date};
+	
+		<li><a href="/">ホーム</a></li>
+		<li sec:authorize="isAuthenticated()">
+		<span sec:authentication="name"></span> さん、ようこそ！
+		   </li>
+		   
+sec:authentication="principal.プロパティ名" を使用します。principal は認証されたユーザーのUserDetailsオブジェクト（あなたの場合はLoginUserDetailsインスタンス）を指します。
 
-                    <li class="nav-item admin-only">
-                        <a class="nav-link text-warning" href="/admin/dashboard">管理者ダッシュボード</a>
-                    </li>
-                    <li class="nav-item admin-only">
-                        <a class="nav-link text-warning" href="/admin/users">ユーザー管理</a>
-                    </li>
+LoginUserDetailsクラスには@Getterアノテーションが付与されているため、nameフィールドのゲッターであるgetName()メソッドが自動生成されています。
 
-                    <li class="nav-item user-only">
-                        <a class="nav-link text-info" href="/user/settings">設定</a>
-                    </li>
-                    <li class="nav-item user-only">
-                        <a class="nav-link text-info" href="/user/history">購入履歴</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <span class="nav-link text-white">こんにちは、<span id="loggedInUsername">ゲスト</span>さん！</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light btn-sm ms-2" href="/logout">ログアウト</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+したがって、Thymeleafでprincipal.nameと記述すると、LoginUserDetailsインスタンスのgetName()メソッドが呼び出され、社員名が取得されます。
+
+<div sec:authorize="isAuthenticated()">
+    <span sec:authentication="principal.name"> さん</span>
+</div>
+
+<div sec:authorize="isAuthenticated()">
+    <span class="badge bg-secondary text-white" style="font-size: 0.9em;">
+        <span sec:authentication="principal.name"></span>さん
+    </span>
+</div>
+
+
+<div class="pt-2 text-white me-auto" sec:authorize="isAuthenticated()">
+	<strong sec:authentication="principal.name"></strong>さん
+</div>

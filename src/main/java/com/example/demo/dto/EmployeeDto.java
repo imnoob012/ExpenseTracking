@@ -22,6 +22,4 @@ public class EmployeeDto {
 		this.updateDate = employee.getUpdateDate();
 		this.deleteDate = employee.getDeleteDate();
 	}
-	
-	
 }

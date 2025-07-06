@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.repository.ExpenseTrackingMapper">
+	
+	<select id="findAllExpenseTracking">
+		SELECT
+			T.*,
+			U.NAME
+		FROM
+			TRAFFIC AS T	<!-- TRAFFICテーブルに'T'という別名を付ける -->
+		INNER JOIN
+			USERS AS U
+		ON
+			T.ID = U.ID<!-- TRAFFICテーブルのIDカラムとUSERSテーブルのIDカラムに一致するレコードを結合 -->
+		WHERE
+			T.USERDAY LIKE #{date};
+	</select>
+	
+	<select id="findByTrafficId">
+		SELECT * FROM TRAFFIC WHERE TRAFFICID = #{trafficId};
+	</select>
+	
+	<insert id="expenseTrackingRegister">
+		INSERT INTO TRAFFIC(USERDAY, MEANS, SECTOR, ROAD, COST, ID) VALUES (#{userDay}, #{means}, #{sector}, #{road}, #{cost}, #{id});
+	</insert>
+	
+	<update id="expenseTrackingUpdate">
+		UPDATE TRAFFIC
+		<set>
+			USERDAY = #{userDay},
+			MEANS = #{means},
+			SECTOR = #{sector},
+			ROAD = #{road},
+			COST = #{cost}
+		</set>
+		WHERE TRAFFICID = #{trafficId};
+	</update>
+	
+	<delete id="expenseTrackingDelete">
+        DELETE FROM TRAFFIC
+        WHERE TRAFFICID = #{trafficId};
+    </delete>
+</mapper>

@@ -27,7 +27,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		if(isAdmin) {
 			redirectUrl = "/Employee/EmployeeList"; // 社員一覧画面
 		} else {
-			redirectUrl = "/ExpenseTrackingList"; // 交通費一覧画面
+			redirectUrl = "/ExpenseTracking/ExpenseTrackingList"; // 交通費一覧画面
 		}
 		response.sendRedirect(redirectUrl);
 		

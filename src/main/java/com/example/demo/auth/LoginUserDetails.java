@@ -9,16 +9,23 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.entity.Employee;
 
+import lombok.Getter;
+
+@Getter
 public class LoginUserDetails implements UserDetails {
 	private String mail;
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
+	private int id; // usersテーブルの主キーを参照する為
+	private String name; // ヘッダーに現在ログインしているユーザー名を表示させるため
 
 	
 	// コンストラクタ ※戻り値の型を指定はしては行けない
 	 public LoginUserDetails(Employee employee) {
 		 this.mail = employee.getMail();
 		 this.password = employee.getPassword();
+		 this.id = employee.getId();
+		 this.name = employee.getName();
 		    
 		// ロールIDから変換
 		switch (employee.getRole()) {
@@ -29,7 +36,7 @@ public class LoginUserDetails implements UserDetails {
 				this.authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
 	}
-
+	 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
@@ -42,7 +49,7 @@ public class LoginUserDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		// ログイン名を返す
+		// メールアドレスを返す
 		return mail;
 	}
 }
