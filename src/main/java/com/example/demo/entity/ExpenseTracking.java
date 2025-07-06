@@ -16,6 +16,7 @@ public class ExpenseTracking {
 	private String road; // 1が片道で2が往復
 	private int cost;
 	private int id; //authenticationprincipalのidをUserDetailsを実装したLoginUserDetailsから取得する為
+	private String name; //内部結合した為、、
 	
 	
 	public void FormToEntity(ExpenseTrackingForm expenseTrackingForm) {

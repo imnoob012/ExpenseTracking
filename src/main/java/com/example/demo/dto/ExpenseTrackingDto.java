@@ -14,6 +14,7 @@ public class ExpenseTrackingDto {
 	private String sector;
 	private String road; // 1が片道で2が往復
 	private int cost;
+	private String name;
 	
 	public void ToDto(ExpenseTracking expenseTrackingEntity) {
 		this.trafficId = expenseTrackingEntity.getTrafficId();
@@ -22,5 +23,6 @@ public class ExpenseTrackingDto {
 		this.sector = expenseTrackingEntity.getSector();
 		this.road = expenseTrackingEntity.getRoad(); // 1が片道で2が往復
 		this.cost = expenseTrackingEntity.getCost();
+		this.name = expenseTrackingEntity.getName();
 	}
 }

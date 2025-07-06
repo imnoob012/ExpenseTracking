@@ -11,7 +11,7 @@ import com.example.demo.entity.ExpenseTracking;
 @Mapper
 public interface ExpenseTrackingMapper {
 	
-	List<ExpenseTracking> findAllExpenseTracking();
+	List<ExpenseTracking> findAllExpenseTracking(String date);
 	
 	void expenseTrackingRegister(ExpenseTracking expenseTrackingEntity);
 

@@ -13,8 +13,8 @@ import com.example.demo.repository.ExpenseTrackingMapper;
 public class ExpenseTrackingService {
 	@Autowired ExpenseTrackingMapper expenseTrackingMapper;
 	
-	public List<ExpenseTracking> findAllExpenseTracking() {
-		return expenseTrackingMapper.findAllExpenseTracking();
+	public List<ExpenseTracking> findAllExpenseTracking(String date) {
+		return expenseTrackingMapper.findAllExpenseTracking(date);
 	}
 	
 	public void expenseTrackingRegister(ExpenseTracking expenseTrackingEntity) {

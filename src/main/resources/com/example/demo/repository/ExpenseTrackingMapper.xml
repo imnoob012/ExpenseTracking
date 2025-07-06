@@ -3,7 +3,17 @@
 <mapper namespace="com.example.demo.repository.ExpenseTrackingMapper">
 	
 	<select id="findAllExpenseTracking">
-		SELECT * FROM TRAFFIC;
+		SELECT
+			T.*,
+			U.NAME
+		FROM
+			TRAFFIC AS T	<!-- TRAFFICテーブルに'T'という別名を付ける -->
+		INNER JOIN
+			USERS AS U
+		ON
+			T.ID = U.ID<!-- TRAFFICテーブルのIDカラムとUSERSテーブルのIDカラムに一致するレコードを結合 -->
+		WHERE
+			T.USERDAY LIKE #{date};
 	</select>
 	
 	<select id="findByTrafficId">
@@ -21,6 +31,7 @@
 			MEANS = #{means},
 			SECTOR = #{sector},
 			ROAD = #{road},
+			COST = #{cost}
 		</set>
 		WHERE TRAFFICID = #{trafficId};
 	</update>
